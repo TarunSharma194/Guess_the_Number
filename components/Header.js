@@ -14,12 +14,12 @@ const Header = (props) => {
 const styles = StyleSheet.create({
 	header: {
 		width: '100%',
-		height: 70,
+		height: 90,
 		padding: 30,
 		justifyContent: 'center',
 		alignItems: 'center',
-        backgroundColor: Colors.primary,
-        marginVertical: 25
+		backgroundColor: Colors.primary,
+		marginBottom: 20
 	},
 	headerTitle: {
 		color: 'black',
