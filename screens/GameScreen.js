@@ -17,10 +17,19 @@ const generateRandomBetween = (min, max, exclude) => {
 
 const GameScreen = (props) => {
 	const [ currentGuess, setCurrentGuess ] = useState(generateRandomBetween(1, 100, props.userChoice));
+	const [rounds, setRounds] = useState(0);
 
 	const currentLow = useRef(1);
 	const currentHigh = useRef(100);
 	// useRef are not generated again when the component is re-rendered. Thus the value remains locked
+
+	const {userChoice, onGameOver} = props;
+
+	useEffect(() => {
+		if (currentGuess === userChoice) {
+			onGameOver(rounds);
+		}
+	}, [currentGuess, userChoice, onGameOver]);
 
 	const nextGuessHandler = (direction) => {
 		if (
@@ -32,15 +41,13 @@ const GameScreen = (props) => {
 		}
 		if (direction === 'lower') {
 			currentHigh.current = currentGuess;
-			console.log('max', currentGuess);
 		}
 		else {
 			currentLow.current = currentGuess;
-			console.log('min', currentGuess);
 		}
 		const nextNumber = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess);
-		console.log('nextGuess', nextNumber);
 		setCurrentGuess(nextNumber);
+		setRounds(curRounds => curRounds + 1);
 	};
 
 	return (
