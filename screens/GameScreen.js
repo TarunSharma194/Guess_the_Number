@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert, ScrollView, FlatList, Dimensions } from 'react-native';
 
 import NumberContainer from '../components/NumberContainer';
 import Card from '../components/Card';
@@ -105,10 +105,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-around',
 		width: 400,
 		maxWidth: '90%',
-		marginTop: 20
+		marginTop: Dimensions.get('window') > 600 ? 20 : 5
 	},
 	listContainer: {
-		width: '60%',
+		width: Dimensions.get('window').width > 350 ? '60%' : '80%',
 		flex: 1
 	},
 	list: {
