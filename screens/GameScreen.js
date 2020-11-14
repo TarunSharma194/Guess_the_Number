@@ -30,12 +30,24 @@ const GameScreen = (props) => {
 	const [ currentGuess, setCurrentGuess ] = useState(initialGuess);
 	//const [rounds, setRounds] = useState(0);
 	const [ pastGuesses, setPastGuesses ] = useState([ initialGuess.toString() ]);
+	const [availableDeviceHeight, setAvailableDeviceHeight] = useState(Dimensions.get('window').height)
 
 	const currentLow = useRef(1);
 	const currentHigh = useRef(100);
 	// useRef are not generated again when the component is re-rendered. Thus the value remains locked
 
 	const { userChoice, onGameOver } = props;
+
+	useEffect (() => {
+		const updateLayout = () => {
+			setAvailableDeviceHeight(Dimensions.get('window').height)
+		};
+		Dimensions.addEventListener('change', updateLayout);
+
+		return () => {
+			Dimensions.removeEventListener('change', updateLayout);
+		}
+	});
 
 	useEffect(
 		() => {
@@ -65,33 +77,58 @@ const GameScreen = (props) => {
 		setPastGuesses((curPastGuesses) => [ nextNumber.toString(), ...curPastGuesses ]);
 	};
 
-	return (
-		<View style={styles.screen}>
-			<Text style={DefultStyles.title}>Opponent's Guess</Text>
-			<NumberContainer>{currentGuess}</NumberContainer>
-			<Card style={styles.buttonContainer}>
-				<MainButton onPress={() => nextGuessHandler('lower')}>
-					<Ionicons name="md-remove" size={24} color="white" />
-				</MainButton>
-				<MainButton onPress={() => nextGuessHandler('greater')}>
-					<Ionicons name="md-add" size={24} color="white" />
-				</MainButton>
-				{/*<Button title="Lower" onPress={() => nextGuessHandler('lower')} />
-				<Button title="Greater" onPress={() => nextGuessHandler('greater')} /> */}
-			</Card>
-			<View style={styles.listContainer}>
-				{/* <ScrollView contentContainerStyle={styles.list}>
-					{pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
-				</ScrollView> */}
-				<FlatList
-					keyExtractor={(item) => item}
-					data={pastGuesses}
-					renderItem={renderListItem.bind(this, pastGuesses.length)}
-					contentContainerStyle={styles.list}
-				/>
+	if (availableDeviceHeight < 400) {
+		return (
+			<View style={styles.screen}>
+				<Text style={DefultStyles.title}>Opponent's Guess</Text>
+				<View style={styles.control}>
+					<MainButton onPress={() => nextGuessHandler('lower')}>
+						<Ionicons name="md-remove" size={24} color="white" />
+					</MainButton>
+					<NumberContainer>{currentGuess}</NumberContainer>
+					<MainButton onPress={() => nextGuessHandler('greater')}>
+						<Ionicons name="md-add" size={24} color="white" />
+					</MainButton>
+				</View>
+				<View style={styles.listContainer}>
+					<FlatList
+						keyExtractor={(item) => item}
+						data={pastGuesses}
+						renderItem={renderListItem.bind(this, pastGuesses.length)}
+						contentContainerStyle={styles.list}
+					/>
+				</View>
 			</View>
-		</View>
-	);
+		);
+	} else {
+		return (
+			<View style={styles.screen}>
+				<Text style={DefultStyles.title}>Opponent's Guess</Text>
+				<NumberContainer>{currentGuess}</NumberContainer>
+				<Card style={styles.buttonContainer}>
+					<MainButton onPress={() => nextGuessHandler('lower')}>
+						<Ionicons name="md-remove" size={24} color="white" />
+					</MainButton>
+					<MainButton onPress={() => nextGuessHandler('greater')}>
+						<Ionicons name="md-add" size={24} color="white" />
+					</MainButton>
+					{/*<Button title="Lower" onPress={() => nextGuessHandler('lower')} />
+					<Button title="Greater" onPress={() => nextGuessHandler('greater')} /> */}
+				</Card>
+				<View style={styles.listContainer}>
+					{/* <ScrollView contentContainerStyle={styles.list}>
+						{pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+					</ScrollView> */}
+					<FlatList
+						keyExtractor={(item) => item}
+						data={pastGuesses}
+						renderItem={renderListItem.bind(this, pastGuesses.length)}
+						contentContainerStyle={styles.list}
+					/>
+				</View>
+			</View>
+		);
+	}
 };
 
 const styles = StyleSheet.create({
@@ -125,6 +162,12 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 		justifyContent: 'space-around',
 		width: '100%'
+	},
+	control: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		alignItems: 'center',
+		width: '80%'
 	}
 });
 
